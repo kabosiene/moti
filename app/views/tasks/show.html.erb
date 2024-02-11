@@ -3,8 +3,47 @@
 <%= render @task %>
 
 <div>
-  <%= link_to "Edit this task", edit_task_path(@task) %> |
-  <%= link_to "Back to tasks", tasks_path %>
+  <% if @task.user.nil? %>
+    <%= form_with url: assign_user_task_path(@task), method: :put do %>
+      <%= select_tag :user_id, options_from_collection_for_select(User.all, :id, :name) %>
+      <%= submit_tag "Assign user to this task" %>
+    <% end %>
+  <% else %>
+    User assigned: <%= @task.user.name %>
+  <% end %>
+</div>
 
+<div>
+  <%= link_to "Edit this task", edit_task_path(@task) %> |
+  <%= link_to "Back to tasks", tasks_path %> |
   <%= button_to "Destroy this task", @task, method: :delete %>
 </div>
+
+<h2>Add Child Task</h2>
+<%= form_for @task.children.new, url: add_child_task_path(@task), method: :post do |f| %>
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :description %>
+    <%= f.text_area :description %>
+  </div>
+  <div class="actions">
+    <%= f.submit "Add Child Task" %>
+  </div>
+<% end %>
+
+<% if @task.children.exists? %>
+  <h2>Child Tasks</h2>
+  <% @task.children.each do |child_task| %>
+    <p>
+      <strong>Name:</strong>
+      <%= child_task.name %>
+    </p>
+    <p>
+      <strong>Description:</strong>
+      <%= child_task.description %>
+    </p>
+  <% end %>
+<% end %>

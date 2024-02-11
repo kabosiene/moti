@@ -2,6 +2,19 @@
 
 <%= render @project %>
 
+<% @project.tasks.each do |task| %>
+  <p>
+    <strong>Task Name:</strong> <%= task.name %><br>
+    <strong>Description:</strong> <%= task.description %>
+  </p>
+<% end %>
+
+<p>
+
+<strong>Paper Title:</strong> <%= link_to @project.paper.name, paper_path(@project.paper) %><br>
+  <strong>Description:</strong> <%= @project.paper.description %>
+</p>
+
 <div>
   <%= link_to "Edit this project", edit_project_path(@project) %> |
   <%= link_to "Back to projects", projects_path %>

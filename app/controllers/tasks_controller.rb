@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  before_action :set_task, only: %i[ show edit update destroy ]
+  before_action :set_task, only: %i[ show edit update destroy assign_user add_child]
 
   # GET /tasks or /tasks.json
   def index
@@ -57,6 +57,26 @@ class TasksController < ApplicationController
     end
   end
 
+  def assign_user
+    @user = User.find(params[:user_id])
+    @task.user = @user
+    if @task.save
+      redirect_to @task, notice: 'User was successfully assigned.'
+    else
+      redirect_to @task, alert: 'There was an error assigning the user.'
+    end
+  end
+
+  def add_child
+    child_task = @task.children.new(task_params)
+    child_task.project = @task.project
+    if child_task.save
+      render json: { status: 'success', message: 'Child task was successfully added.' }
+    else
+      render json: { status: 'error', message: 'There was a problem adding the child task.', errors: child_task.errors }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_task
@@ -65,6 +85,6 @@ class TasksController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def task_params
-      params.require(:task).permit(:name, :description, :project_id)
+      params.require(:task).permit(:name, :description, :project_id, :user_id)
     end
 end

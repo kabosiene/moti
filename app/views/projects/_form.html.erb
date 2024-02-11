@@ -18,7 +18,7 @@
 
   <div>
     <%= form.label :paper_id, style: "display: block" %>
-    <%= form.text_field :paper_id %>
+    <%= form.collection_select :paper_id, Paper.all, :id, :name %>
   </div>
 
   <div>
